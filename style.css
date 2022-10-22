@@ -21,8 +21,8 @@ html, body {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 40px;
-            margin-bottom: 40px;
+            width: 60%;
+            margin-left: 200px;
         }
 
         ul#pastcomments {
@@ -76,6 +76,7 @@ html, body {
 .left-column {
   width: 65%;
   position: relative;
+  overflow: hidden;
 }
 
 .right-column {
@@ -86,12 +87,14 @@ html, body {
 
 /* Left Column */
 .left-column img {
-  width: 100%;
+  width: 70%;
   position: absolute;
   left: 0;
   top: 0;
   opacity: 0;
   transition: all 0.3s ease;
+  margin-top: 20px;
+  object-fit: cover;
 }
 
 .left-column img.active {
@@ -281,4 +284,19 @@ html, body {
     width: 220px;
     top: -85px;
   }
+}
+
+
+.comments-showup{
+  display: flex;
+  align-items: center;
+  margin-left: 120px;
+}
+
+.comment-section{
+  display: flex;
+}
+
+.comment-title{
+  margin-left: 90px;
 }

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./product.css">
+    <style>
+        @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+    </style>
+</head>
+<body>
+  <div class="nav">
+    <img src="images/ecommerce.png" alt="">
+    <p>HapsCartee</p>
+    <a href="./index.html">More Products</a>
+    <a href="">About</a>
+</div>
+    <div class="container">
+        <!-- <div class="img-container"> -->
+            <img src="./images/red.png" alt="">
+        <!-- </div> -->
+        <div class="product-details">
+            <h1>Headphones</h1>
+            <p>Red</p>
+            <p>Nice Headphones with bluetooth Supported</p>
+            <h3>&#8377;999 only</h3>
+            <p>Few left hurry up!</p>
+            <button>Buy Now</button>
+        </div>
+    </div>
+    <hr>
+    <div class="form-container">
+        <div class="comments-showup">
+            <h3>Comments</h3>
+            <ul id="pastcomments"></ul>
+          </div>
+        <form id="newcomment">
+            <h2>Add your Comment</h2>
+            <label class="form-name" for="tbName">First Name or Initials</label>
+            <br />
+            <input id="tbName" type="text" maxlength="20" required />
+            <br />
+            <label for="tbName">Title</label>
+            <br />
+            <input id="tbName" type="text" maxlength="20" />
+            <br />
+            <label for="txComment">Your Comment</label>
+            <br />
+            <textarea
+              id="txComment"
+              maxlength="4096"
+              required
+            ></textarea>
+            <br />
+            <input class="button-form" type="submit" id="btnSubmitComment" value="Comment" />
+          </form>
+    </div>
+    <!-- Scripts -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+      charset="utf-8"
+    ></script>
+    <script src="script.js" charset="utf-8"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyA6MWmEtBPk1x2RSELOnLWDrSv9-wFRfms",
+        authDomain: "ecomerce-7d355.firebaseapp.com",
+        databaseURL: "https://ecomerce-7d355-default-rtdb.firebaseio.com",
+        projectId: "ecomerce-7d355",
+        storageBucket: "ecomerce-7d355.appspot.com",
+        messagingSenderId: "470251535450",
+        appId: "1:470251535450:web:9288267be03c0b7458ac63",
+        measurementId: "G-YN8D8ZPB3B",
+      };
+      firebase.initializeApp(firebaseConfig);
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      const rootRef = firebase.database().ref();
+      //commentsRef is just the pageCountsNode
+      const commentsRef = rootRef.child("comments");
+      //Listen for click on Submit Comment button, and post comment.
+      document
+        .getElementById("btnSubmitComment")
+        .addEventListener("click", function () {
+          //Replace line breaks in comment with br tags.
+          var newcomment = document
+            .getElementById("txComment")
+            .value.replace(/\n/g, "<br>");
+          //Define a new, keyed post.
+          var newPostRef = commentsRef.push();
+          //Fill tne new keyed post with data
+          newPostRef.set({
+            name: document.getElementById("tbName").value.trim(),
+            comment: newcomment.trim(),
+            frompage: location.pathname,
+            when: firebase.database.ServerValue.TIMESTAMP,
+          });
+        });
+
+      function showpastcomments() {
+        var showat = document.getElementById("pastcomments");
+        //Get comments whose from page equals this page's pathname.
+        var commentsRef = firebase
+          .database()
+          .ref("comments/")
+          .orderByChild("frompage")
+          .equalTo(location.pathname);
+        commentsRef.once("value", function (snapshot) {
+          snapshot.forEach(function (itemSnapshot) {
+            //Get the object for one snapshot
+            var itemData = itemSnapshot.val();
+            var comment = itemData.comment;
+            var name = itemData.name;
+            var when = new Date(itemData.when).toLocaleDateString("en-us");
+            showat.innerHTML +=
+              "<li>" +
+              comment +
+              "<span> -- " +
+              name +
+              " (" +
+              when +
+              ")</span></li>";
+          });
+        });
+      }
+      //Called when page first opens and also after Submit button click to show all comments for this page.
+      showpastcomments();
+    </script>
+</body>
+</html>
